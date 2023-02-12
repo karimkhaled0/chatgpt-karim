@@ -44,5 +44,5 @@ export default async function handler(
     .collection("messages")
     .add(message);
 
-  res.status(200).json({ answer: message.text });
+  return res.status(200).json({ answer: message.text });
 }
