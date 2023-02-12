@@ -15,6 +15,7 @@ type Props = {
 
 const ChatInput = ({ chatId }: Props) => {
     const [prompt, setPrompt] = useState('')
+    const [success, setSueccess] = useState(true)
     const { data: session } = useSession()
 
     const { data: model } = useSWR('model', {
@@ -42,7 +43,7 @@ const ChatInput = ({ chatId }: Props) => {
         await addDoc(collection(db, 'users', session?.user?.email!, 'chats', chatId, 'messages'), message)
 
         const notification = toast.loading('ChatGPT is thinking...')
-
+        setSueccess(false)
         await fetch('/api/askQuestion', {
             method: 'POST',
             headers: {
@@ -56,6 +57,7 @@ const ChatInput = ({ chatId }: Props) => {
             })
         }).then((res) => {
             // Toast notification to say successful
+            setSueccess(true)
             toast.success('ChatGPT is responded!', {
                 id: notification
             })
@@ -73,7 +75,7 @@ const ChatInput = ({ chatId }: Props) => {
                     className='bg-transparent focus:outline-none flex-1 disabled:cursor-not-allowed disabled:text-gray-300'
                 />
 
-                <button disabled={!prompt || !session} className='bg-[#11A37F] hover:opacity-50 text-white font-bold px-4 py-2 
+                <button disabled={!prompt || !session || !success} className='bg-[#11A37F] hover:opacity-50 text-white font-bold px-4 py-2 
                 rounded cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:opacity-100' type="submit">
                     <PaperAirplaneIcon className="h-4 w-4 -rotate-45" />
                 </button>
